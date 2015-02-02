@@ -60,19 +60,19 @@
 	/* Public Interface - May be used in end-application: */
 		/* Macros: */
 			/** Mask for the joystick being pushed in the left direction. */
-			#define JOY_LEFT                  // TODO: Add mask to indicate joystick left position here
+			#define JOY_LEFT 0                 // TODO: Add mask to indicate joystick left position here
 
 			/** Mask for the joystick being pushed in the right direction. */
-			#define JOY_RIGHT                 // TODO: Add mask to indicate joystick right position here
+			#define JOY_RIGHT 0                // TODO: Add mask to indicate joystick right position here
 
 			/** Mask for the joystick being pushed in the upward direction. */
-			#define JOY_UP                    // TODO: Add mask to indicate joystick up position here
+			#define JOY_UP 0                   // TODO: Add mask to indicate joystick up position here
 
 			/** Mask for the joystick being pushed in the downward direction. */
-			#define JOY_DOWN                  // TODO: Add mask to indicate joystick down position here
+			#define JOY_DOWN 0                 // TODO: Add mask to indicate joystick down position here
 
 			/** Mask for the joystick being pushed inward. */
-			#define JOY_PRESS                 // TODO: Add mask to indicate joystick pressed position here
+			#define JOY_PRESS 0                // TODO: Add mask to indicate joystick pressed position here
 
 		/* Inline Functions: */
 		#if !defined(__DOXYGEN__)

@@ -60,16 +60,16 @@
 	/* Public Interface - May be used in end-application: */
 		/* Macros: */
 			/** LED mask for the first LED on the board. */
-			#define LEDS_LED1        // TODO: Add mask for first board LED here
+			#define LEDS_LED1 0       // TODO: Add mask for first board LED here
 
 			/** LED mask for the second LED on the board. */
-			#define LEDS_LED2        // TODO: Add mask for second board LED here
+			#define LEDS_LED2 0       // TODO: Add mask for second board LED here
 
 			/** LED mask for the third LED on the board. */
-			#define LEDS_LED3        // TODO: Add mask for third board LED here
+			#define LEDS_LED3 0       // TODO: Add mask for third board LED here
 
 			/** LED mask for the fourth LED on the board. */
-			#define LEDS_LED4        // TODO: Add mask for fourth board LED here
+			#define LEDS_LED4 0      // TODO: Add mask for fourth board LED here
 
 			/** LED mask for all the LEDs on the board. */
 			#define LEDS_ALL_LEDS    (LEDS_LED1 | LEDS_LED2 | LEDS_LED3 | LEDS_LED4)
