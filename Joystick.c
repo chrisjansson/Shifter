@@ -34,6 +34,7 @@
  *  the demo and is responsible for the initial application hardware configuration.
  */
 
+#include <util/delay.h>
 #include "Joystick.h"
 
 /** Buffer to hold the previously generated HID report, for comparison purposes inside the HID class driver. */
@@ -161,7 +162,7 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
 	USB_JoystickReport_Data_t* JoystickReport = (USB_JoystickReport_Data_t*)ReportData;
 
 	uint8_t JoyStatus_LCL    = Joystick_GetStatus();
-	uint8_t ButtonStatus_LCL = Buttons_GetStatus();
+	uint16_t ButtonStatus_LCL = Buttons_GetStatus();
 
 	if (JoyStatus_LCL & JOY_UP)
 	  JoystickReport->Y = -100;
@@ -176,11 +177,10 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
 	if (JoyStatus_LCL & JOY_PRESS)
 	  JoystickReport->Button |= (1 << 1);
 
-	if (ButtonStatus_LCL & BUTTONS_BUTTON1)
-	  JoystickReport->Button |= (1 << 0);
+	JoystickReport->Button = ButtonStatus_LCL;
 
 	*ReportSize = sizeof(USB_JoystickReport_Data_t);
-	return false;
+	return true;
 }
 
 /** HID class driver callback function for the processing of HID reports from the host.

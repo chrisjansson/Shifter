@@ -44,6 +44,33 @@
 #ifndef __BUTTONS_USER_H__
 #define __BUTTONS_USER_H__
 
+#define BUTTON_SHIFT_REGISTER_MODE_PIN 0
+#define BUTTON_DATA_PIN 1
+#define BUTTON_CLOCK_PIN 2
+#define G25_BUTTONS 16
+
+#include <util/delay.h>
+
+#define HIGH 1
+#define LOW 0
+
+uint8_t buttonsGlobal[16];
+void read_buttons(uint8_t *buttons) {
+	PORTD = 0;
+	_delay_us(10);
+	PORTD = 1;
+
+	for (uint8_t i = 0; i < G25_BUTTONS; i++) {
+		PORTD = 1;
+		_delay_us(10);
+
+		buttons[i] = (PINB >> 2) & 0x01;
+
+		PORTD = 3;
+		_delay_us(10);
+	}
+}
+
 	/* Includes: */
 		// TODO: Add any required includes here
 
@@ -60,12 +87,16 @@
 	/* Public Interface - May be used in end-application: */
 		/* Macros: */
 			/** Button mask for the first button on the board. */
-			#define BUTTONS_BUTTON1 0         // TODO: Add mask for first board button here
+			#define BUTTONS_BUTTON1 0xFF         // TODO: Add mask for first board button here
 
 		/* Inline Functions: */
 		#if !defined(__DOXYGEN__)
 			static inline void Buttons_Init(void)
 			{
+				DDRB = 0;
+				DDRD = 0xFF;
+				PORTD = 0xFF;
+				PORTB = 0;
 				// TODO: Initialize the appropriate port pins as an inputs here, with pull-ups
 			}
 
@@ -74,10 +105,17 @@
 				// TODO: Clear the appropriate port pins as high impedance inputs here
 			}
 
-			static inline uint8_t Buttons_GetStatus(void) ATTR_WARN_UNUSED_RESULT;
-			static inline uint8_t Buttons_GetStatus(void)
+			static inline uint16_t Buttons_GetStatus(void) ATTR_WARN_UNUSED_RESULT;
+			static inline uint16_t Buttons_GetStatus(void)
 			{
-				return 0;
+				uint16_t buttonResult = 0;
+				read_buttons(buttonsGlobal);
+
+				for (uint8_t i = 0; i < 16; i++) {
+						buttonResult |= (buttonsGlobal[i] << i);
+				}
+				return buttonResult;
+				//return PINB;
 				// TODO: Return current button status here, debounced if required
 			}
 		#endif
