@@ -45,29 +45,26 @@
 #define __BUTTONS_USER_H__
 
 #define BUTTON_SHIFT_REGISTER_MODE_PIN 0
-#define BUTTON_DATA_PIN 1
-#define BUTTON_CLOCK_PIN 2
+#define BUTTON_DATA_PIN 2
+#define BUTTON_CLOCK_PIN 1
+#define BUTTON_MODE_AND_CLOCK_WAIT 10
 #define G25_BUTTONS 16
 
 #include <util/delay.h>
 
-#define HIGH 1
-#define LOW 0
-
-uint8_t buttonsGlobal[16];
 void read_buttons(uint8_t *buttons) {
-	PORTD = 0;
-	_delay_us(10);
-	PORTD = 1;
+	PORTD = PORTD & ~(1 << BUTTON_SHIFT_REGISTER_MODE_PIN);
+	_delay_us(BUTTON_MODE_AND_CLOCK_WAIT);
+	PORTD = PORTD | (1 << BUTTON_SHIFT_REGISTER_MODE_PIN);
 
 	for (uint8_t i = 0; i < G25_BUTTONS; i++) {
-		PORTD = 1;
-		_delay_us(10);
+		PORTD = PORTD & ~(1 << BUTTON_CLOCK_PIN);
+		_delay_us(BUTTON_MODE_AND_CLOCK_WAIT);
 
-		buttons[i] = (PINB >> 2) & 0x01;
+		buttons[i] = (PINB >> BUTTON_DATA_PIN) & 0x01;
 
-		PORTD = 3;
-		_delay_us(10);
+		PORTD = PORTD | (1 << BUTTON_CLOCK_PIN);
+		_delay_us(BUTTON_MODE_AND_CLOCK_WAIT);
 	}
 }
 
@@ -109,14 +106,13 @@ void read_buttons(uint8_t *buttons) {
 			static inline uint16_t Buttons_GetStatus(void)
 			{
 				uint16_t buttonResult = 0;
-				read_buttons(buttonsGlobal);
 
-				for (uint8_t i = 0; i < 16; i++) {
-						buttonResult |= (buttonsGlobal[i] << i);
+				uint8_t buttons[16];
+				read_buttons(buttons);
+				for (uint8_t i = 0; i < G25_BUTTONS; i++) {
+						buttonResult |= (buttons[i] << i);
 				}
 				return buttonResult;
-				//return PINB;
-				// TODO: Return current button status here, debounced if required
 			}
 		#endif
 
