@@ -45,7 +45,7 @@
 #define __BUTTONS_USER_H__
 
 #define BUTTON_SHIFT_REGISTER_MODE_PIN 0
-#define BUTTON_DATA_PIN 2
+#define BUTTON_DATA_PIN 4
 #define BUTTON_CLOCK_PIN 1
 #define BUTTON_MODE_AND_CLOCK_WAIT 10
 #define G25_BUTTONS 16
@@ -61,7 +61,7 @@ void read_buttons(uint8_t *buttons) {
 		PORTD = PORTD & ~(1 << BUTTON_CLOCK_PIN);
 		_delay_us(BUTTON_MODE_AND_CLOCK_WAIT);
 
-		buttons[i] = (PINB >> BUTTON_DATA_PIN) & 0x01;
+		buttons[i] = (PIND >> BUTTON_DATA_PIN) & 0x01;
 
 		PORTD = PORTD | (1 << BUTTON_CLOCK_PIN);
 		_delay_us(BUTTON_MODE_AND_CLOCK_WAIT);
@@ -90,10 +90,8 @@ void read_buttons(uint8_t *buttons) {
 		#if !defined(__DOXYGEN__)
 			static inline void Buttons_Init(void)
 			{
-				DDRB = 0;
-				DDRD = 0xFF;
-				PORTD = 0xFF;
-				PORTB = 0;
+				DDRD = (1 << BUTTON_SHIFT_REGISTER_MODE_PIN) | (1 << BUTTON_CLOCK_PIN);
+				PORTD = 0;
 				// TODO: Initialize the appropriate port pins as an inputs here, with pull-ups
 			}
 
