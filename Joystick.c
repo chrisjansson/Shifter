@@ -143,6 +143,48 @@ void EVENT_USB_Device_StartOfFrame(void)
 	HID_Device_MillisecondElapsed(&Joystick_HID_Interface);
 }
 
+uint8_t decode_shifter(coordinates c){
+
+			//x12 350
+			//x56 655
+			//y135 700
+			//y246 200
+
+			if(c.x < 240){
+				if(c.y > 425){
+					return (1 << 0);
+				}
+			}
+
+			if(c.x < 240){
+				if(c.y < 125){
+					return (1 << 1);
+				}
+			}
+
+			if(c.x > 400){
+				if(c.y > 425){
+					return (1 << 4);
+				}
+			}
+
+			if(c.x > 400){
+				if(c.y < 125){
+					return (1 << 5);
+				}
+			}
+
+			if(c.y > 425){
+				return (1 << 2);
+			}
+
+			if(c.y < 125){
+				return (1 << 3);
+			}
+
+			return 0;
+}
+
 /** HID class driver callback function for the creation of HID reports to the host.
  *
  *  \param[in]     HIDInterfaceInfo  Pointer to the HID class interface configuration structure being referenced
@@ -161,10 +203,10 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
 {
 	USB_JoystickReport_Data_t* JoystickReport = (USB_JoystickReport_Data_t*)ReportData;
 
-	uint8_t JoyStatus_LCL    = Joystick_GetStatus();
+	coordinates c = Joystick_GetStatus();
 	uint16_t ButtonStatus_LCL = Buttons_GetStatus();
 
-	if (JoyStatus_LCL & JOY_UP)
+/*	if (JoyStatus_LCL & JOY_UP)
 	  JoystickReport->Y = -100;
 	else if (JoyStatus_LCL & JOY_DOWN)
 	  JoystickReport->Y =  100;
@@ -172,12 +214,15 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
 	if (JoyStatus_LCL & JOY_LEFT)
 	  JoystickReport->X = -100;
 	else if (JoyStatus_LCL & JOY_RIGHT)
-	  JoystickReport->X =  100;
+	  JoystickReport->X =  100;*/
 
-	if (JoyStatus_LCL & JOY_PRESS)
-	  JoystickReport->Button |= (1 << 1);
+		//JoystickReport->Y = JoyStatus_LCL;
+		//JoystickReport->X = (int8_t)(JoyStatus_LCL - 100);
 
-	JoystickReport->Button = ButtonStatus_LCL;
+
+
+//	JoystickReport->Button = ButtonStatus_LCL;
+	JoystickReport->Button = decode_shifter(c);
 
 	*ReportSize = sizeof(USB_JoystickReport_Data_t);
 	return true;

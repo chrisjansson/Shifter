@@ -111,6 +111,7 @@ void read_buttons(uint8_t *buttons) {
 						buttonResult |= (buttons[i] << i);
 				}
 				return buttonResult;
+				PORTD = 0;
 			}
 		#endif
 

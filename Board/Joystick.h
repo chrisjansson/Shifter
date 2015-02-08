@@ -41,11 +41,14 @@
  *  driver, for a digital four-way (plus button) joystick.
 */
 
+#include <avr/io.h>
+
 #ifndef __JOYSTICK_USER_H__
 #define __JOYSTICK_USER_H__
 
 	/* Includes: */
 		// TODO: Add any required includes here
+
 
 	/* Enable C linkage for C++ Compilers: */
 		#if defined(__cplusplus)
@@ -56,6 +59,11 @@
 		#if !defined(__INCLUDE_FROM_JOYSTICK_H)
 			#error Do not include this file directly. Include LUFA/Drivers/Board/Joystick.h instead.
 		#endif
+
+		typedef struct {
+			uint16_t x;
+			uint16_t y;
+		} coordinates;
 
 	/* Public Interface - May be used in end-application: */
 		/* Macros: */
@@ -74,11 +82,24 @@
 			/** Mask for the joystick being pushed inward. */
 			#define JOY_PRESS 0                // TODO: Add mask to indicate joystick pressed position here
 
+/*			• Bit 3:0 – ADTS3:0: ADC Auto Trigger Source
+			If ADATE in ADCSRA is written to one, the value of these bits selects which source will trigger an ADC
+			conversion. If ADATE is cleared, the ADTS3:0 settings will have no effect. A conversion will be triggered by the
+			rising edge of the selected interrupt flag. Note that switching from a trigger source that is cleared to a trigger
+			source that is set, will generate a positive edge on the trigger signal. If ADEN in ADCSRA is set, this will start a
+			conversion. Switching to Free Running mode (ADTS[3:0]=0) will not cause a trigger event, even if the ADC
+			Interrupt Flag is set.*/
+
 		/* Inline Functions: */
 		#if !defined(__DOXYGEN__)
 			static inline void Joystick_Init(void)
 			{
-				// TODO: Initialize joystick port pins as inputs with pull-ups
+				ADCSRA |= (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0); // Set ADC prescalar to 128 - 125KHz sample rate @ 16MHz
+
+				ADMUX |= (1 << REFS0); // Set ADC reference to AVCC
+
+				DDRB = 1;
+				DDRF = 0;
 			}
 
 			static inline void Joystick_Disable(void)
@@ -86,11 +107,33 @@
 				// TODO: Clear the joystick pins as high impedance inputs here
 			}
 
-			static inline uint8_t Joystick_GetStatus(void) ATTR_WARN_UNUSED_RESULT;
-			static inline uint8_t Joystick_GetStatus(void)
+			uint16_t read_adc(uint8_t mux){
+				ADMUX = ((ADMUX) & ~7) | (mux & 7);
+				ADCSRA |= (1 << ADEN);  // Enable ADC
+				ADCSRA |= (1 << ADSC);  // Start A2D Conversions
+				while(ADCSRA & (1 << ADSC)){
+
+				}
+
+				int l = ADCL;
+				int result = (ADCH << 8) | l;
+				if(result < 200){
+					PORTB = 1;
+				}
+				else{
+					PORTB = 0;
+				}
+				ADCSRA = ADCSRA & ~(1 << ADEN);  // Enable ADC
+				return result;
+			}
+
+			static inline coordinates Joystick_GetStatus(void) ATTR_WARN_UNUSED_RESULT;
+			static inline coordinates Joystick_GetStatus(void)
 			{
-				return 0;
-				// TODO: Return current joystick position data which can be obtained by masking against the JOY_* macros
+				coordinates c;
+				c.x = read_adc(7); //A0
+				c.y = read_adc(6); //A1
+				return c;
 			}
 		#endif
 
