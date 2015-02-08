@@ -43,16 +43,24 @@
  *  the device will send, and what it may be sent back from the host. Refer to the HID specification for
  *  more details on HID report descriptors.
  */
+#define Buttons 16
+
 const USB_Descriptor_HIDReport_Datatype_t PROGMEM JoystickReport[] =
 {
-	/* Use the HID class driver's standard Joystick report.
-	 *   Min X/Y/Z Axis values: -100
-	 *   Max X/Y/Z Axis values:  100
-	 *   Min physical X/Y/Z Axis values (used to determine resolution): -1
-	 *   Max physical X/Y/Z Axis values (used to determine resolution):  1
-	 *   Buttons: 2
-	 */
-	HID_DESCRIPTOR_JOYSTICK(-125, 125, -1, 1, 16)
+	HID_RI_USAGE_PAGE(8, 0x01),
+	HID_RI_USAGE(8, 0x04),
+	HID_RI_COLLECTION(8, 0x01),
+		HID_RI_COLLECTION(8, 0x00),
+			HID_RI_USAGE_PAGE(8, 0x09),
+			HID_RI_USAGE_MINIMUM(8, 0x01),
+			HID_RI_USAGE_MAXIMUM(8, Buttons),
+			HID_RI_LOGICAL_MINIMUM(8, 0x00),
+			HID_RI_LOGICAL_MAXIMUM(8, 0x01),
+			HID_RI_REPORT_COUNT(8, Buttons),
+			HID_RI_REPORT_SIZE(8, 0x01),
+			HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE),
+		HID_RI_END_COLLECTION(0),
+	HID_RI_END_COLLECTION(0)
 };
 
 /** Device descriptor structure. This descriptor, located in FLASH memory, describes the overall
