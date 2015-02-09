@@ -98,7 +98,6 @@
 
 				ADMUX |= (1 << REFS0); // Set ADC reference to AVCC
 
-				DDRB = 1;
 				DDRF = 0;
 			}
 
@@ -111,19 +110,11 @@
 				ADMUX = ((ADMUX) & ~7) | (mux & 7);
 				ADCSRA |= (1 << ADEN);  // Enable ADC
 				ADCSRA |= (1 << ADSC);  // Start A2D Conversions
-				while(ADCSRA & (1 << ADSC)){
-
-				}
+				while(ADCSRA & (1 << ADSC)) {}
 
 				int l = ADCL;
 				int result = (ADCH << 8) | l;
-				if(result < 200){
-					PORTB = 1;
-				}
-				else{
-					PORTB = 0;
-				}
-				ADCSRA = ADCSRA & ~(1 << ADEN);  // Enable ADC
+				ADCSRA = ADCSRA & ~(1 << ADEN);  // Disable ADC
 				return result;
 			}
 

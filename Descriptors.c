@@ -43,7 +43,7 @@
  *  the device will send, and what it may be sent back from the host. Refer to the HID specification for
  *  more details on HID report descriptors.
  */
-#define Buttons 16
+#define Buttons 19
 
 const USB_Descriptor_HIDReport_Datatype_t PROGMEM JoystickReport[] =
 {
@@ -59,6 +59,9 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM JoystickReport[] =
 			HID_RI_REPORT_COUNT(8, Buttons),
 			HID_RI_REPORT_SIZE(8, 0x01),
 			HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE),
+			HID_RI_REPORT_COUNT(8, 1),
+			HID_RI_REPORT_SIZE(8, 5),
+			HID_RI_INPUT(8, HID_IOF_CONSTANT | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE),
 		HID_RI_END_COLLECTION(0),
 	HID_RI_END_COLLECTION(0)
 };

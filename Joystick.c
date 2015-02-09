@@ -143,25 +143,22 @@ void EVENT_USB_Device_StartOfFrame(void)
 	HID_Device_MillisecondElapsed(&Joystick_HID_Interface);
 }
 
-uint8_t decode_shifter(coordinates c){
-
-			//x12 350
-			//x56 655
-			//y135 700
-			//y246 200
-
+uint8_t decode_shifter(coordinates c, bool isStickDown){
+			//First
 			if(c.x < 240){
 				if(c.y > 425){
 					return (1 << 0);
 				}
 			}
 
+			//Second
 			if(c.x < 240){
 				if(c.y < 125){
 					return (1 << 1);
 				}
 			}
 
+			//Fifth
 			if(c.x > 400){
 				if(c.y > 425){
 					return (1 << 4);
@@ -170,14 +167,18 @@ uint8_t decode_shifter(coordinates c){
 
 			if(c.x > 400){
 				if(c.y < 125){
-					return (1 << 5);
+					if(isStickDown)
+						return (1 << 6); //Reverse
+					return (1 << 5); //Sixth
 				}
 			}
 
+			//Third
 			if(c.y > 425){
 				return (1 << 2);
 			}
 
+			//Fourth
 			if(c.y < 125){
 				return (1 << 3);
 			}
@@ -206,23 +207,14 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
 	coordinates c = Joystick_GetStatus();
 	uint16_t ButtonStatus_LCL = Buttons_GetStatus();
 
-/*	if (JoyStatus_LCL & JOY_UP)
-	  JoystickReport->Y = -100;
-	else if (JoyStatus_LCL & JOY_DOWN)
-	  JoystickReport->Y =  100;
+	bool isShifterPressed = (ButtonStatus_LCL & (1 << 1)) == (1<< 1);
+	uint8_t shifter = decode_shifter(c, isShifterPressed);
+	uint8_t first4Buttons = (ButtonStatus_LCL >> 4) & 0x0F;
+	uint8_t last8Buttons = (ButtonStatus_LCL >> 8);
 
-	if (JoyStatus_LCL & JOY_LEFT)
-	  JoystickReport->X = -100;
-	else if (JoyStatus_LCL & JOY_RIGHT)
-	  JoystickReport->X =  100;*/
-
-		//JoystickReport->Y = JoyStatus_LCL;
-		//JoystickReport->X = (int8_t)(JoyStatus_LCL - 100);
-
-
-
-//	JoystickReport->Button = ButtonStatus_LCL;
-	JoystickReport->Button = decode_shifter(c);
+	JoystickReport->Buttons[0] = shifter | ((first4Buttons << 4) & 0x80); //Shift 4th button to bit7
+	JoystickReport->Buttons[1] = last8Buttons;
+	JoystickReport->Buttons[2] = first4Buttons & 7;
 
 	*ReportSize = sizeof(USB_JoystickReport_Data_t);
 	return true;
