@@ -44,29 +44,7 @@
 #ifndef __BUTTONS_USER_H__
 #define __BUTTONS_USER_H__
 
-#define BUTTON_SHIFT_REGISTER_MODE_PIN 0
-#define BUTTON_DATA_PIN 4
-#define BUTTON_CLOCK_PIN 1
-#define BUTTON_MODE_AND_CLOCK_WAIT 10
-#define G25_BUTTONS 16
-
-#include <util/delay.h>
-
-void read_buttons(uint8_t *buttons) {
-	PORTD = PORTD & ~(1 << BUTTON_SHIFT_REGISTER_MODE_PIN);
-	_delay_us(BUTTON_MODE_AND_CLOCK_WAIT);
-	PORTD = PORTD | (1 << BUTTON_SHIFT_REGISTER_MODE_PIN);
-
-	for (uint8_t i = 0; i < G25_BUTTONS; i++) {
-		PORTD = PORTD & ~(1 << BUTTON_CLOCK_PIN);
-		_delay_us(BUTTON_MODE_AND_CLOCK_WAIT);
-
-		buttons[i] = (PIND >> BUTTON_DATA_PIN) & 0x01;
-
-		PORTD = PORTD | (1 << BUTTON_CLOCK_PIN);
-		_delay_us(BUTTON_MODE_AND_CLOCK_WAIT);
-	}
-}
+#include "../g27shifter.h"
 
 	/* Includes: */
 		// TODO: Add any required includes here
@@ -105,13 +83,12 @@ void read_buttons(uint8_t *buttons) {
 			{
 				uint16_t buttonResult = 0;
 
-				uint8_t buttons[16];
-				read_buttons(buttons);
-				for (uint8_t i = 0; i < G25_BUTTONS; i++) {
+				uint8_t buttons[NUMBER_OF_SHIFT_REGISTER_BUTTONS];
+				read_shift_register_buttons(buttons);
+				for (uint8_t i = 0; i < NUMBER_OF_SHIFT_REGISTER_BUTTONS; i++) {
 						buttonResult |= (buttons[i] << i);
 				}
 				return buttonResult;
-				PORTD = 0;
 			}
 		#endif
 
