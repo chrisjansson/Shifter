@@ -48,7 +48,7 @@
 
 	/* Includes: */
 		// TODO: Add any required includes here
-
+		#include "../g27shifter.h"
 
 	/* Enable C linkage for C++ Compilers: */
 		#if defined(__cplusplus)
@@ -59,11 +59,6 @@
 		#if !defined(__INCLUDE_FROM_JOYSTICK_H)
 			#error Do not include this file directly. Include LUFA/Drivers/Board/Joystick.h instead.
 		#endif
-
-		typedef struct {
-			uint16_t x;
-			uint16_t y;
-		} coordinates;
 
 		/* Inline Functions: */
 		#if !defined(__DOXYGEN__)
@@ -81,25 +76,10 @@
 				// TODO: Clear the joystick pins as high impedance inputs here
 			}
 
-			uint16_t read_adc(uint8_t mux){
-				ADMUX = ((ADMUX) & ~7) | (mux & 7);
-				ADCSRA |= (1 << ADEN);  // Enable ADC
-				ADCSRA |= (1 << ADSC);  // Start A2D Conversions
-				while(ADCSRA & (1 << ADSC)) {}
-
-				int l = ADCL;
-				int result = (ADCH << 8) | l;
-				ADCSRA = ADCSRA & ~(1 << ADEN);  // Disable ADC
-				return result;
-			}
-
-			static inline coordinates Joystick_GetStatus(void) ATTR_WARN_UNUSED_RESULT;
-			static inline coordinates Joystick_GetStatus(void)
+			static inline uint8_t Joystick_GetStatus(void) ATTR_WARN_UNUSED_RESULT;
+			static inline uint8_t Joystick_GetStatus(void)
 			{
-				coordinates c;
-				c.x = read_adc(7); //A0
-				c.y = read_adc(6); //A1
-				return c;
+				return read_selected_gear(false);
 			}
 		#endif
 

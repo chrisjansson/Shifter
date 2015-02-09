@@ -143,49 +143,6 @@ void EVENT_USB_Device_StartOfFrame(void)
 	HID_Device_MillisecondElapsed(&Joystick_HID_Interface);
 }
 
-uint8_t decode_shifter(coordinates c, bool isStickDown){
-			//First
-			if(c.x < 240){
-				if(c.y > 425){
-					return (1 << 0);
-				}
-			}
-
-			//Second
-			if(c.x < 240){
-				if(c.y < 125){
-					return (1 << 1);
-				}
-			}
-
-			//Fifth
-			if(c.x > 400){
-				if(c.y > 425){
-					return (1 << 4);
-				}
-			}
-
-			if(c.x > 400){
-				if(c.y < 125){
-					if(isStickDown)
-						return (1 << 6); //Reverse
-					return (1 << 5); //Sixth
-				}
-			}
-
-			//Third
-			if(c.y > 425){
-				return (1 << 2);
-			}
-
-			//Fourth
-			if(c.y < 125){
-				return (1 << 3);
-			}
-
-			return 0;
-}
-
 /** HID class driver callback function for the creation of HID reports to the host.
  *
  *  \param[in]     HIDInterfaceInfo  Pointer to the HID class interface configuration structure being referenced
@@ -204,11 +161,10 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
 {
 	USB_JoystickReport_Data_t* JoystickReport = (USB_JoystickReport_Data_t*)ReportData;
 
-	coordinates c = Joystick_GetStatus();
+	uint8_t shifter = Joystick_GetStatus();
 	uint16_t ButtonStatus_LCL = Buttons_GetStatus();
 
 	bool isShifterPressed = (ButtonStatus_LCL & (1 << 1)) == (1<< 1);
-	uint8_t shifter = decode_shifter(c, isShifterPressed);
 	uint8_t first4Buttons = (ButtonStatus_LCL >> 4) & 0x0F;
 	uint8_t last8Buttons = (ButtonStatus_LCL >> 8);
 

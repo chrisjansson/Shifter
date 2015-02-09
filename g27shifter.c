@@ -23,3 +23,70 @@ void read_shift_register_buttons(uint8_t *buttons) {
     buttons[i] = read_button();
   }
 }
+
+static inline uint16_t read_adc(uint8_t mux) {
+  ADMUX = ((ADMUX) & ~7) | (mux & 7);
+  ADCSRA |= (1 << ADEN);  // Enable ADC
+  ADCSRA |= (1 << ADSC);  // Start A2D Conversions
+  while(ADCSRA & (1 << ADSC)) {}
+
+  int result = ADCL | (ADCH << 8); //ADCL must be read first
+  ADCSRA = ADCSRA & ~(1 << ADEN);  // Disable ADC, ADC must be disabled to change MUX
+  return result;
+}
+
+static inline g27coordinates read_shift_stick_coordinates() {
+  g27coordinates c;
+  c.x = read_adc(STICK_X_ADC);
+  c.y = read_adc(STICK_Y_ADC);
+  return c;
+}
+
+static inline uint8_t decode_shifter(g27coordinates c, bool isStickDown) {
+      //First
+      if(c.x < 240){
+        if(c.y > 425){
+          return (1 << 0);
+        }
+      }
+
+      //Second
+      if(c.x < 240){
+        if(c.y < 125){
+          return (1 << 1);
+        }
+      }
+
+      //Fifth
+      if(c.x > 400){
+        if(c.y > 425){
+          return (1 << 4);
+        }
+      }
+
+      if(c.x > 400){
+        if(c.y < 125){
+          if(isStickDown)
+            return (1 << 6); //Reverse
+          return (1 << 5); //Sixth
+        }
+      }
+
+      //Third
+      if(c.y > 425){
+        return (1 << 2);
+      }
+
+      //Fourth
+      if(c.y < 125){
+        return (1 << 3);
+      }
+
+      return 0;
+}
+
+uint8_t read_selected_gear(bool isStickDown){
+  g27coordinates c = read_shift_stick_coordinates();
+  uint8_t selectedGear = decode_shifter(c, isStickDown);
+  return selectedGear;
+}
