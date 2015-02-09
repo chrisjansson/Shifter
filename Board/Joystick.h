@@ -65,31 +65,6 @@
 			uint16_t y;
 		} coordinates;
 
-	/* Public Interface - May be used in end-application: */
-		/* Macros: */
-			/** Mask for the joystick being pushed in the left direction. */
-			#define JOY_LEFT 0                 // TODO: Add mask to indicate joystick left position here
-
-			/** Mask for the joystick being pushed in the right direction. */
-			#define JOY_RIGHT 0                // TODO: Add mask to indicate joystick right position here
-
-			/** Mask for the joystick being pushed in the upward direction. */
-			#define JOY_UP 0                   // TODO: Add mask to indicate joystick up position here
-
-			/** Mask for the joystick being pushed in the downward direction. */
-			#define JOY_DOWN 0                 // TODO: Add mask to indicate joystick down position here
-
-			/** Mask for the joystick being pushed inward. */
-			#define JOY_PRESS 0                // TODO: Add mask to indicate joystick pressed position here
-
-/*			• Bit 3:0 – ADTS3:0: ADC Auto Trigger Source
-			If ADATE in ADCSRA is written to one, the value of these bits selects which source will trigger an ADC
-			conversion. If ADATE is cleared, the ADTS3:0 settings will have no effect. A conversion will be triggered by the
-			rising edge of the selected interrupt flag. Note that switching from a trigger source that is cleared to a trigger
-			source that is set, will generate a positive edge on the trigger signal. If ADEN in ADCSRA is set, this will start a
-			conversion. Switching to Free Running mode (ADTS[3:0]=0) will not cause a trigger event, even if the ADC
-			Interrupt Flag is set.*/
-
 		/* Inline Functions: */
 		#if !defined(__DOXYGEN__)
 			static inline void Joystick_Init(void)
