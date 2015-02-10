@@ -101,9 +101,8 @@ void SetupHardware(void)
 #endif
 
 	/* Hardware Initialization */
-	Joystick_Init();
+	g27_initialize_io();
 	LEDs_Init();
-	Buttons_Init();
 	USB_Init();
 }
 
@@ -161,12 +160,13 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
 {
 	USB_JoystickReport_Data_t* JoystickReport = (USB_JoystickReport_Data_t*)ReportData;
 
-	uint8_t shifter = Joystick_GetStatus();
-	uint16_t ButtonStatus_LCL = Buttons_GetStatus();
+	uint16_t buttons = read_buttons();
+	bool isShifterPressed = ((buttons & (1 << 1)) == (1<< 1)) & 1;
 
-	bool isShifterPressed = (ButtonStatus_LCL & (1 << 1)) == (1<< 1);
-	uint8_t first4Buttons = (ButtonStatus_LCL >> 4) & 0x0F;
-	uint8_t last8Buttons = (ButtonStatus_LCL >> 8);
+	uint8_t shifter = read_selected_gear(isShifterPressed);
+
+	uint8_t first4Buttons = (buttons >> 4) & 0x0F;
+	uint8_t last8Buttons = (buttons >> 8);
 
 	JoystickReport->Buttons[0] = shifter | ((first4Buttons << 4) & 0x80); //Shift 4th button to bit7
 	JoystickReport->Buttons[1] = last8Buttons;
