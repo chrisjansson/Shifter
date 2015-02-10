@@ -36,6 +36,7 @@
 
 #include <util/delay.h>
 #include "Joystick.h"
+#include "g27shifter.h"
 
 /** Buffer to hold the previously generated HID report, for comparison purposes inside the HID class driver. */
 static uint8_t PrevJoystickHIDReportBuffer[sizeof(USB_JoystickReport_Data_t)];
@@ -68,7 +69,6 @@ int main(void)
 {
 	SetupHardware();
 
-	LEDs_SetAllLEDs(LEDMASK_USB_NOTREADY);
 	GlobalInterruptEnable();
 
 	for (;;)
@@ -102,20 +102,17 @@ void SetupHardware(void)
 
 	/* Hardware Initialization */
 	g27_initialize_io();
-	LEDs_Init();
 	USB_Init();
 }
 
 /** Event handler for the library USB Connection event. */
 void EVENT_USB_Device_Connect(void)
 {
-	LEDs_SetAllLEDs(LEDMASK_USB_ENUMERATING);
 }
 
 /** Event handler for the library USB Disconnection event. */
 void EVENT_USB_Device_Disconnect(void)
 {
-	LEDs_SetAllLEDs(LEDMASK_USB_NOTREADY);
 }
 
 /** Event handler for the library USB Configuration Changed event. */
@@ -126,8 +123,6 @@ void EVENT_USB_Device_ConfigurationChanged(void)
 	ConfigSuccess &= HID_Device_ConfigureEndpoints(&Joystick_HID_Interface);
 
 	USB_Device_EnableSOFEvents();
-
-	LEDs_SetAllLEDs(ConfigSuccess ? LEDMASK_USB_READY : LEDMASK_USB_ERROR);
 }
 
 /** Event handler for the library USB Control Request reception event. */
