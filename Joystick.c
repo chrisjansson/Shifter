@@ -28,12 +28,6 @@
   this software.
 */
 
-/** \file
- *
- *  Main source file for the Joystick demo. This file contains the main tasks of
- *  the demo and is responsible for the initial application hardware configuration.
- */
-
 #include <util/delay.h>
 #include "Joystick.h"
 #include "g27shifter.h"
@@ -78,7 +72,6 @@ int main(void)
 	}
 }
 
-/** Configures the board hardware and chip peripherals for the demo's functionality. */
 void SetupHardware(void)
 {
 #if (ARCH == ARCH_AVR8)
@@ -185,5 +178,4 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t* const HIDI
                                           const void* ReportData,
                                           const uint16_t ReportSize)
 {
-	// Unused (but mandatory for the HID class driver) in this demo, since there are no Host->Device reports
 }
