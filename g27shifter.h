@@ -13,16 +13,20 @@
 
 #define BUTTON_PORT PORTD
 #define BUTTON_PIN PIND
+#define BUTTON_IO DDRD
 
 #define STICK_X_ADC 7
 #define STICK_Y_ADC 6
+#define ADC_IO DDRF
 
 typedef struct {
   uint16_t x;
   uint16_t y;
 } g27coordinates;
 
-void read_shift_register_buttons(uint8_t* buttons);
+void g27_initialize_io();
+
+uint16_t read_buttons();
 
 uint8_t read_selected_gear(bool isStickDown);
 
