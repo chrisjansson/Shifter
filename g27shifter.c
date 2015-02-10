@@ -6,7 +6,6 @@ void g27_initialize_io() {
 
   ADCSRA |= (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0); // Set ADC prescalar to 128 - 125KHz sample rate @ 16MHz
   ADMUX |= (1 << REFS0); // Set ADC reference to AVCC
-  //ADC_IO = ADC_IO & ~((1 << STICK_X_ADC) | (1 << STICK_Y_ADC));
   ADC_IO = 0;
 }
 
