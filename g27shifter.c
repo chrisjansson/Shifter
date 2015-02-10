@@ -1,5 +1,15 @@
 #include "g27shifter.h"
 
+void g27_initialize_io() {
+  BUTTON_IO = (1 << BUTTON_SHIFT_REGISTER_MODE_PIN) | (1 << BUTTON_CLOCK_PIN);
+  BUTTON_PORT = BUTTON_PORT & ~(1 << BUTTON_DATA_PIN);
+
+  ADCSRA |= (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0); // Set ADC prescalar to 128 - 125KHz sample rate @ 16MHz
+  ADMUX |= (1 << REFS0); // Set ADC reference to AVCC
+  //ADC_IO = ADC_IO & ~((1 << STICK_X_ADC) | (1 << STICK_Y_ADC));
+  ADC_IO = 0;
+}
+
 static inline void latch_shift_register() {
   BUTTON_PORT = BUTTON_PORT & ~(1 << BUTTON_SHIFT_REGISTER_MODE_PIN);
   _delay_us(BUTTON_MODE_AND_CLOCK_WAIT);
@@ -17,11 +27,23 @@ static inline uint8_t read_button() {
   return button;
 }
 
-void read_shift_register_buttons(uint8_t *buttons) {
+static inline void read_shift_register_buttons(uint8_t *buttons) {
   latch_shift_register();
   for (uint8_t i = 0; i < NUMBER_OF_SHIFT_REGISTER_BUTTONS; i++) {
     buttons[i] = read_button();
   }
+}
+
+uint16_t read_buttons() {
+  uint16_t buttonResult = 0;
+  uint8_t buttons[NUMBER_OF_SHIFT_REGISTER_BUTTONS];
+
+  read_shift_register_buttons(buttons);
+  for (uint8_t i = 0; i < NUMBER_OF_SHIFT_REGISTER_BUTTONS; i++) {
+      buttonResult |= (buttons[i] << i);
+  }
+
+  return buttonResult;
 }
 
 static inline uint16_t read_adc(uint8_t mux) {

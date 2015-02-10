@@ -68,8 +68,6 @@
 		#if !defined(__DOXYGEN__)
 			static inline void Buttons_Init(void)
 			{
-				DDRD = (1 << BUTTON_SHIFT_REGISTER_MODE_PIN) | (1 << BUTTON_CLOCK_PIN);
-				PORTD = 0;
 				// TODO: Initialize the appropriate port pins as an inputs here, with pull-ups
 			}
 
@@ -81,14 +79,7 @@
 			static inline uint16_t Buttons_GetStatus(void) ATTR_WARN_UNUSED_RESULT;
 			static inline uint16_t Buttons_GetStatus(void)
 			{
-				uint16_t buttonResult = 0;
-
-				uint8_t buttons[NUMBER_OF_SHIFT_REGISTER_BUTTONS];
-				read_shift_register_buttons(buttons);
-				for (uint8_t i = 0; i < NUMBER_OF_SHIFT_REGISTER_BUTTONS; i++) {
-						buttonResult |= (buttons[i] << i);
-				}
-				return buttonResult;
+				return 0;
 			}
 		#endif
 

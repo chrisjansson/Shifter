@@ -48,8 +48,6 @@
 
 	/* Includes: */
 		// TODO: Add any required includes here
-		#include "../g27shifter.h"
-
 	/* Enable C linkage for C++ Compilers: */
 		#if defined(__cplusplus)
 			extern "C" {
@@ -64,11 +62,6 @@
 		#if !defined(__DOXYGEN__)
 			static inline void Joystick_Init(void)
 			{
-				ADCSRA |= (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0); // Set ADC prescalar to 128 - 125KHz sample rate @ 16MHz
-
-				ADMUX |= (1 << REFS0); // Set ADC reference to AVCC
-
-				DDRF = 0;
 			}
 
 			static inline void Joystick_Disable(void)
@@ -79,7 +72,7 @@
 			static inline uint8_t Joystick_GetStatus(void) ATTR_WARN_UNUSED_RESULT;
 			static inline uint8_t Joystick_GetStatus(void)
 			{
-				return read_selected_gear(false);
+				return 0;
 			}
 		#endif
 
