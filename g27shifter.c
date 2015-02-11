@@ -94,12 +94,10 @@ static inline uint8_t decode_shifter(g27coordinates c, bool isStickDown) {
         }
       }
 
-      //Third
       if(c.y > STICK_Y_135){
         return third;
       }
 
-      //Fourth
       if(c.y < STICK_Y_246R){
         return fourth;
       }
