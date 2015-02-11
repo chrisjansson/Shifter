@@ -49,3 +49,15 @@ Repeat for the other STICK_\* values.
 To make this compatible with a G25 shifter switch pin 1 and 7 going into the DSUB9, that is clock on pin 7 and +5V on pin 1.
 
 Since the G27 doesn't have the sequential mode that is not implemented, but as seen in the schematic value 4 from the shift register tells wether the shifter is in H or sequential mode.
+
+##Hardware operation
+The X and Y pins are simply potentiometers that tells how the stick is positioned. The buttons work through parallel in serial out shift registers. Pulling the mode pin low then holding it high latches the current input pins so that they can be sequentially read through the serial output. The shift register advances to the next value on the falling edge on the clock pin.
+
+##Schematics
+### G25 circuitry ###
+![image](http://i.imgur.com/W0HSzhh.png?1)
+
+### G25 and G27 pinouts ###
+Showing that 1 and 9 are shorted in a G25
+
+![image](http://i.imgur.com/csH44Uz.jpg?1)
