@@ -64,46 +64,47 @@ static inline g27coordinates read_shift_stick_coordinates() {
 }
 
 static inline uint8_t decode_shifter(g27coordinates c, bool isStickDown) {
-      //First
-      if(c.x < 240){
-        if(c.y > 425){
-          return (1 << 0);
+      const uint8_t neutral = 0;
+      const uint8_t first = (1 << 0);
+      const uint8_t second = (1 << 1);
+      const uint8_t third = (1 << 2);
+      const uint8_t fourth = (1 << 3);
+      const uint8_t fifth = (1 << 4);
+      const uint8_t sixth = (1 << 5);
+      const uint8_t reverse = (1 << 6);
+
+      if(c.x < STICK_X_12) {
+        if(c.y > STICK_Y_135){
+          return first;
+        }
+        else if(c.y < STICK_Y_246R){
+          return second;
         }
       }
 
-      //Second
-      if(c.x < 240){
-        if(c.y < 125){
-          return (1 << 1);
+      if(c.x > STICK_X_56R){
+        if(c.y > STICK_Y_135){
+          return fifth;
         }
-      }
-
-      //Fifth
-      if(c.x > 400){
-        if(c.y > 425){
-          return (1 << 4);
-        }
-      }
-
-      if(c.x > 400){
-        if(c.y < 125){
-          if(isStickDown)
-            return (1 << 6); //Reverse
-          return (1 << 5); //Sixth
+        else if(c.y < STICK_Y_246R){
+          if(isStickDown){
+            return reverse;
+          }
+          return sixth;
         }
       }
 
       //Third
-      if(c.y > 425){
-        return (1 << 2);
+      if(c.y > STICK_Y_135){
+        return third;
       }
 
       //Fourth
-      if(c.y < 125){
-        return (1 << 3);
+      if(c.y < STICK_Y_246R){
+        return fourth;
       }
 
-      return 0;
+      return neutral;
 }
 
 uint8_t read_selected_gear(bool isStickDown){

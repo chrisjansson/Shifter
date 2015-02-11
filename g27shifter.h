@@ -19,6 +19,11 @@
 #define STICK_Y_ADC 6
 #define ADC_IO DDRF
 
+#define STICK_X_12 330
+#define STICK_X_56R 550
+#define STICK_Y_135 425
+#define STICK_Y_246R 150
+
 typedef struct {
   uint16_t x;
   uint16_t y;
