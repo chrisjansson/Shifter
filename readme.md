@@ -6,17 +6,17 @@ This project is for using a G25/27 shifter connected directly to your computer a
 
 This is the pinout of the DSUB9 coming out of the shifter (female)
 
-PIN   | Purpose
-------|--------------
-1     | Clock
-2     | Serial Button Data
-3     | Shift Register Mode Parallel/Serial
-4     | X Axis
-5     | Ground LEDs
-6     | Ground Logic
-7     | +5V Short
-8     | Y Axis
-9     | +5V Short
+PIN   | Purpose                              | Wire Color
+------|--------------                        |------
+1     | Clock                                | Purple
+2     | Serial Button Data                   | Gray
+3     | Shift Register Mode Parallel/Serial  | Yellow
+4     | X Axis                               | Orange
+5     | Ground LEDs                          | White
+6     | Ground Logic                         | Black
+7     | +5V Short                            | Red
+8     | Y Axis                               | Green
+9     | +5V Short                            | Red
 
 The first step is to wire the shfiter I/O.
 
